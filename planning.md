@@ -62,3 +62,51 @@ Baseline_solution(words, width):
 
 ## Time Complexity
 Our baseline solution using the purely recursive approach operates inefficiently compared to our optimized solution. The baseline algorithm operates with a $\mathcal{O}(2^n)$ time complexity. This is because each call tries every line that fits, then recurses on the remaining words, so the same remaining words get recomputed over and over. In the worst case, every word fits on one line, so each word either ends a line or doesn’t, doubling the number of calls for each extra word.
+
+Optimized Solution
+We will use dynamic programming to improve our recursive baseline. The main steps stay the same, but we add a table called memo to save answers we have already calculated.
+
+Before solving the remaining words, we check whether their minimum penalty is already saved. If it is, we return that answer. Otherwise, we calculate it and save it before returning. This avoids doing the same work repeatedly.
+
+Optimized_solution(words, width):
+    n = len(words)
+    W = width
+    memo = empty table
+
+    def recursive(i):
+        if i == n:
+            return 0
+
+        if i is in memo:
+            return memo[i]
+
+        best = infinity
+        C = 0
+
+        for j from i to n-1:
+            C += len(words[j]) + 1
+
+            if C - 1 > W:
+                break
+
+            if j == n - 1:
+                cost = 0
+            else:
+                cost = (W - C + 1)^3
+
+            best = min(best, cost + recursive(j + 1))
+
+        memo[i] = best
+        return best
+
+    return recursive(0)
+
+Like our baseline, this returns the minimum penalty. We use cubing, rather than multiplying by 3, to match the project’s penalty formula.
+Optimized Time Complexity
+The worst-case time complexity is \(\Theta(n^2)\). There are \(n\) possible starting positions, and each is solved only once. For each position, we check the words that could fit on that line. At most, we make:
+\[
+n+(n-1)+\cdots+1=\frac{n(n+1)}{2}
+\]
+checks. Each check takes constant time, assuming word lengths and arithmetic take constant time.
+
+The extra space is \(O(n)\) for the saved answers and recursive calls.
